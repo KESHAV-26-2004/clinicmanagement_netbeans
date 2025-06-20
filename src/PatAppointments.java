@@ -1,0 +1,930 @@
+
+
+import java.awt.Color;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.text.ParseException;
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+
+/**
+ *
+ * @author LENOVO
+ */
+public class PatAppointments extends javax.swing.JFrame implements Runnable{
+    String tofind = null;
+    
+    String requestdate = null;
+    int hour,seconds,minutes;
+    private String[] dates = new String[7];
+    private Color newcolor = new Color(204,204,255);
+    private Color ongoingc  = new Color(255,204,204);
+    private Color pastc  = new Color(204,255,204);
+
+    /**
+     * Creates new form PatAppointments
+     */
+    public PatAppointments() {
+        putvalue();
+        initComponents();
+        showDate();
+        Thread t=new Thread(this);
+        t.start();
+        ToFind();
+        requestdate();
+    }
+    void showDate(){
+        Date d= new Date();
+        SimpleDateFormat sd= new SimpleDateFormat("dd-MM-yyyy");
+        date.setText(sd.format(d));
+    
+    }
+    public void ToFind(){
+        Connection add = myConnection.getConnection();
+        PreparedStatement addps;
+        ResultSet addrs;
+        try {
+            addps = add.prepareStatement("SELECT * FROM `signup`");
+            addrs = addps.executeQuery();
+            while(addrs.next()){
+                tofind = addrs.getString("UserName");
+            }
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        phoneno.setText(tofind);
+        
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            ps = add.prepareStatement("SELECT * FROM `patientdetails` WHERE `phone no.`= ?");
+            ps.setString(1, tofind);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                firstname.setText(rs.getString("FirstName"));
+                lastname.setText(rs.getString("LastName"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PatAppointments.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void requestdate(){
+        Connection con = myConnection.getConnection();
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            ps = con.prepareStatement("SELECT * FROM `appointments` WHERE `phone no.`= ?");
+            ps.setString(1,tofind);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                requestdate = rs.getString("Date");
+            }
+      
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        
+    }
+    public static String tocheckdays(String dates){
+        String inputDate = dates; // Input date in the format "dd-MM-yyyy"
+
+        // Parse the input date
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate date = LocalDate.parse(inputDate, formatter);
+
+        // Get the day of the week
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+
+        // Print the result
+        String ans = String.valueOf(dayOfWeek);
+        return ans;
+    }
+    public static String getNextDate(String curDate) {
+        String nextDate = "";
+        try {
+            Calendar today = Calendar.getInstance();
+            DateFormat format = new SimpleDateFormat("dd-mm-yyyy");
+            Date date = format.parse(curDate);
+            today.setTime(date);
+            today.add(Calendar.DAY_OF_YEAR, 1); // Add one day
+            nextDate = format.format(today.getTime());
+        } catch (Exception e) {
+            // Handle exceptions if needed
+        }
+        return nextDate;
+    }
+    public void putvalue(){
+        Date d= new Date();
+        SimpleDateFormat sd= new SimpleDateFormat("dd-MM-yyyy");
+        
+        int i =0;
+        String nextdate = getNextDate(sd.format(d));
+        
+        while(i<7){
+            String wday = tocheckdays(nextdate);
+            if(!wday.equals("SATURDAY")&&!wday.equals("SUNDAY")){
+                dates[i]=nextdate;
+                nextdate = getNextDate(nextdate);
+                i++;
+            }
+            
+            else{
+                nextdate = getNextDate(nextdate);
+            }
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        newapp = new javax.swing.JButton();
+        ongoing = new javax.swing.JButton();
+        past = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        date = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        time = new javax.swing.JTextField();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        phoneno = new javax.swing.JTextField();
+        TodayDay = new javax.swing.JTextField();
+        firstname = new javax.swing.JTextField();
+        lastname = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        description = new javax.swing.JTextArea();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        ongoingtable = new javax.swing.JTable();
+        jButton3 = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        ongoingtable1 = new javax.swing.JTable();
+        jButton5 = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setMaximizedBounds(new java.awt.Rectangle(0, 0, 900, 650));
+        setMaximumSize(new java.awt.Dimension(900, 650));
+        setMinimumSize(new java.awt.Dimension(900, 650));
+        setPreferredSize(new java.awt.Dimension(900, 650));
+        setResizable(false);
+
+        jPanel1.setBackground(new java.awt.Color(204, 255, 255));
+
+        jLabel1.setFont(new java.awt.Font("Yu Gothic UI", 1, 48)); // NOI18N
+        jLabel1.setText("PAT BUDDY");
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/2.jpg"))); // NOI18N
+        jLabel2.setText("jLabel2");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        newapp.setBackground(new java.awt.Color(204, 204, 255));
+        newapp.setFont(new java.awt.Font("Segoe Script", 1, 18)); // NOI18N
+        newapp.setText("New App.");
+        newapp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newappActionPerformed(evt);
+            }
+        });
+
+        ongoing.setBackground(new java.awt.Color(255, 204, 204));
+        ongoing.setFont(new java.awt.Font("Segoe Script", 1, 18)); // NOI18N
+        ongoing.setText("Ongoing App.");
+        ongoing.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ongoingActionPerformed(evt);
+            }
+        });
+
+        past.setBackground(new java.awt.Color(204, 255, 204));
+        past.setFont(new java.awt.Font("Segoe Script", 1, 18)); // NOI18N
+        past.setText("Past App.");
+        past.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pastActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
+        jLabel3.setText("DATE :");
+
+        date.setEditable(false);
+        date.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        date.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
+        jLabel4.setText("TIME :");
+
+        time.setEditable(false);
+        time.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        time.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addComponent(newapp, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(ongoing)
+                        .addGap(6, 6, 6)
+                        .addComponent(past, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(date, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(time, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(time, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(ongoing)
+                        .addComponent(newapp))
+                    .addComponent(past))
+                .addContainerGap())
+        );
+
+        jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/original-8629070-3.jpg"))); // NOI18N
+        jLabel5.setText("jLabel5");
+
+        jButton4.setBackground(new java.awt.Color(255, 102, 102));
+        jButton4.setFont(new java.awt.Font("Segoe Script", 0, 24)); // NOI18N
+        jButton4.setText("Back");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap(408, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(290, 290, 290))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jButton4)
+                        .addGap(41, 41, 41))))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(56, 56, 56)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4)
+                .addContainerGap(25, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Home", jPanel3);
+
+        jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{dates[0],dates[1],dates[2],dates[3],dates[4],dates[5],dates[6]}));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI Emoji", 0, 20)); // NOI18N
+        jLabel6.setText("First Name");
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI Emoji", 0, 20)); // NOI18N
+        jLabel7.setText("Last Name");
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI Emoji", 0, 20)); // NOI18N
+        jLabel8.setText("Phone no.");
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI Emoji", 0, 20)); // NOI18N
+        jLabel9.setText("Date");
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI Emoji", 0, 20)); // NOI18N
+        jLabel10.setText("Day");
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI Emoji", 0, 20)); // NOI18N
+        jLabel11.setText("Description");
+
+        phoneno.setEditable(false);
+        phoneno.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        phoneno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                phonenoActionPerformed(evt);
+            }
+        });
+
+        TodayDay.setEditable(false);
+        TodayDay.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+
+        firstname.setEditable(false);
+        firstname.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+
+        lastname.setEditable(false);
+        lastname.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+
+        description.setColumns(20);
+        description.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        description.setRows(5);
+        jScrollPane1.setViewportView(description);
+
+        jButton1.setBackground(new java.awt.Color(255, 102, 102));
+        jButton1.setFont(new java.awt.Font("Segoe Script", 0, 24)); // NOI18N
+        jButton1.setText("Back");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setBackground(new java.awt.Color(204, 255, 153));
+        jButton2.setFont(new java.awt.Font("Segoe Script", 0, 24)); // NOI18N
+        jButton2.setText("Proceed");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addGap(534, 534, 534)
+                        .addComponent(jButton1)
+                        .addGap(21, 21, 21))
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                            .addComponent(jLabel11)
+                            .addGap(18, 18, 18)
+                            .addComponent(jScrollPane1))
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(lastname))
+                                .addGroup(jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(firstname, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(62, 62, 62)
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(TodayDay, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(56, 56, 56)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(phoneno, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap(207, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(firstname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(phoneno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(46, 46, 46)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel10)
+                    .addComponent(TodayDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lastname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(56, 56, 56)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel11)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2)
+                    .addComponent(jButton1))
+                .addContainerGap(43, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("New App.", jPanel4);
+
+        ongoingtable.setBackground(new java.awt.Color(241, 249, 249));
+        ongoingtable.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.lightGray));
+        ongoingtable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        ongoingtable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Name", "Phone no.", "Date", "Request Detail"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(ongoingtable);
+
+        jButton3.setBackground(new java.awt.Color(255, 102, 102));
+        jButton3.setFont(new java.awt.Font("Segoe Script", 0, 24)); // NOI18N
+        jButton3.setText("Back");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 849, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(181, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3)
+                .addGap(58, 58, 58))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton3)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Ongoing App.", jPanel5);
+
+        ongoingtable1.setBackground(new java.awt.Color(241, 249, 249));
+        ongoingtable1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.lightGray));
+        ongoingtable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        ongoingtable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Name", "Phone no.", "Date", "Request Detail"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(ongoingtable1);
+
+        jButton5.setBackground(new java.awt.Color(255, 102, 102));
+        jButton5.setFont(new java.awt.Font("Segoe Script", 0, 24)); // NOI18N
+        jButton5.setText("Back");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 849, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(180, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton5)
+                .addGap(60, 60, 60))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton5)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Past app.", jPanel6);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void newappActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newappActionPerformed
+
+        newapp.setBackground(Color.gray);
+        ongoing.setBackground(ongoingc);
+        past.setBackground(pastc);
+        jTabbedPane1.setSelectedIndex(1);
+        
+    }//GEN-LAST:event_newappActionPerformed
+    public void changerequesttype() throws ParseException{
+        Connection con = myConnection.getConnection();
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            ps = con.prepareStatement("SELECT * FROM `appointments` WHERE `phone no.`= ? AND `Request detail`=?" );
+            ps.setString(1,tofind);
+            ps.setString(2,"Ongoing");
+            rs = ps.executeQuery();
+            while(rs.next()){
+                if(comparetwodate(date.getText(),requestdate)){
+                    PreparedStatement pss = con.prepareStatement("INSERT INTO `appointments`(`Request detail`) VALUES (?)");
+                    pss.setString(1, "Rejected");                 
+                }
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(PatRecord.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private void ongoingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ongoingActionPerformed
+
+        ongoing.setBackground(Color.gray);
+        newapp.setBackground(newcolor);
+        past.setBackground(pastc);
+        jTabbedPane1.setSelectedIndex(2);
+        Connection con = myConnection.getConnection();
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            ps = con.prepareStatement("SELECT * FROM `appointments` WHERE `phone no.`= ? AND `Request detail`=?" );
+            ps.setString(1,tofind);
+            ps.setString(2,"Ongoing");
+            rs = ps.executeQuery();
+            
+            DefaultTableModel tm=(DefaultTableModel)ongoingtable.getModel();
+            tm.setRowCount(0);
+            while(rs.next()){
+                Object o[]={rs.getInt("ID"),rs.getString("FirstName"),rs.getString("Phone no."),rs.getString("Date"),rs.getString("Request detail")};
+                tm.addRow(o);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(PatRecord.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_ongoingActionPerformed
+
+    private void pastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pastActionPerformed
+        
+        past.setBackground(Color.gray);
+        newapp.setBackground(newcolor);
+        ongoing.setBackground(ongoingc);
+        jTabbedPane1.setSelectedIndex(3);
+        Connection con = myConnection.getConnection();
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            ps = con.prepareStatement("SELECT * FROM `appointments` WHERE `phone no.`= ? AND `Request detail`=?" );
+            ps.setString(1,tofind);
+            ps.setString(2,"Rejected");
+            
+            rs = ps.executeQuery();
+            
+            DefaultTableModel tm=(DefaultTableModel)ongoingtable1.getModel();
+            tm.setRowCount(0);
+            while(rs.next()){
+                Object o[]={rs.getInt("ID"),rs.getString("FirstName"),rs.getString("Phone no."),rs.getString("Date"),rs.getString("Request detail")};
+                tm.addRow(o);
+            }
+            ps = con.prepareStatement("SELECT * FROM `appointments` WHERE `phone no.`= ? AND `Request detail`=?" );
+            ps.setString(1,tofind);
+            ps.setString(2,"Accepted");            
+            rs = ps.executeQuery();
+            while(rs.next()){
+                Object o[]={rs.getInt("ID"),rs.getString("FirstName"),rs.getString("Phone no."),rs.getString("Date"),rs.getString("Request detail")};
+                tm.addRow(o);
+            }
+            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(PatRecord.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_pastActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        PatHome patt =new PatHome();
+        patt.setVisible(true);
+        patt.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        try {
+            if(verifData()){
+                Connection con = myConnection.getConnection();
+                PreparedStatement ps;
+                try {
+                    ps = con.prepareStatement("INSERT INTO `appointments`( `FirstName`, `LastName`, `phone no.`, `Date`, `Day`, `Description`,`Request detail`) VALUES (?,?,?,?,?,?,?)");
+                    ps.setString(1,firstname.getText());
+                    ps.setString(2,lastname.getText());
+                    ps.setString(3,String.valueOf(phoneno.getText()));
+                    ps.setString(4,String.valueOf(jComboBox1.getSelectedItem()));
+                    ps.setString(5,TodayDay.getText());
+                    ps.setString(6,description.getText());
+                    ps.setString(7,"Ongoing");
+
+                    if(ps.executeUpdate()!=0){
+                        JOptionPane.showMessageDialog(null, "Data Saved");
+                        description.setText("");
+
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(null, "Something Went Wrong");
+                    }
+
+                } catch (Exception ex) {
+                    Logger.getLogger(Pat_signup.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (ParseException ex) {
+            Logger.getLogger(PatAppointments.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        PatHome patt =new PatHome();
+        patt.setVisible(true);
+        patt.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void phonenoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_phonenoActionPerformed
+
+    }//GEN-LAST:event_phonenoActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        PatHome patt =new PatHome();
+        patt.setVisible(true);
+        patt.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        PatHome patt =new PatHome();
+        patt.setVisible(true);
+        patt.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_jButton5ActionPerformed
+        public boolean verifData() throws ParseException {
+            if (firstname.getText().equals("") || lastname.getText().equals("") || description.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "One or More Fields Are Empty");
+                return false;
+            }
+
+            if (description.getDocument().getLength() > 100) {
+                JOptionPane.showMessageDialog(null, "Description must be less than 100 characters");
+                return false;
+            }
+
+            // Only check date if requestdate is NOT null or empty
+            if (requestdate != null) {
+                if (comparetwodate(requestdate, date.getText())) {
+                    JOptionPane.showMessageDialog(null, "One request is still ongoing \nPlease make a new request after " + requestdate);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+    public boolean comparetwodate(String d11,String d22) throws ParseException{
+        DateFormat format = new SimpleDateFormat("dd-mm-yyyy");
+        Date date1 = format.parse(d11);
+        Date date2 = format.parse(d22);
+
+        if (date1.compareTo(date2) > 0) {
+            return true;
+        }
+        else if(date1.compareTo(date2) < 0){
+            return false;
+        }
+        else{
+            return false;
+        }
+    }
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(PatAppointments.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(PatAppointments.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(PatAppointments.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(PatAppointments.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new PatAppointments().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField TodayDay;
+    private javax.swing.JTextField date;
+    private javax.swing.JTextArea description;
+    private javax.swing.JTextField firstname;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextField lastname;
+    private javax.swing.JButton newapp;
+    private javax.swing.JButton ongoing;
+    private javax.swing.JTable ongoingtable;
+    private javax.swing.JTable ongoingtable1;
+    private javax.swing.JButton past;
+    private javax.swing.JTextField phoneno;
+    private javax.swing.JTextField time;
+    // End of variables declaration//GEN-END:variables
+    @Override
+    public void run() {
+    while(true){
+    String dateget = String.valueOf(jComboBox1.getSelectedItem());
+    String todayday = tocheckdays(dateget);
+    TodayDay.setText(todayday);
+    Calendar cal= Calendar.getInstance();
+    hour=cal.get(Calendar.HOUR_OF_DAY);
+    minutes=cal.get(Calendar.MINUTE);
+    seconds=cal.get(Calendar.SECOND);
+    
+        SimpleDateFormat sdf24 = new SimpleDateFormat("HH:mm:ss:aa");
+        Date dat = cal.getTime();
+        String time24 =sdf24.format(dat);
+        time.setText(time24);
+    }
+    }
+    /*public void setday(){
+        while(true){
+            String dateget = String.valueOf(jComboBox1.getSelectedItem());
+            String todayday = tocheckdays(dateget);
+            TodayDay.setText(todayday);
+        }
+    }*/
+}
