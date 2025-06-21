@@ -11,9 +11,9 @@ public class myConnection {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection(
-            "jdbc:mysql://sql12.freesqldatabase.com:3306/sql12785936",
-                "sql12785936",
-                "lzwVwE49zS");
+            "jdbc:mysql://sql12.freesqldatabase.com:3306/....",
+                "",
+                "");
         }catch (Exception ex){
             System.out.println("Connection failed: " + ex.getMessage());
         }
