@@ -194,7 +194,7 @@ This project demonstrates:
 
 # 👨‍💻 Author
 
-**Keshav Verma**
+**Keshav**
 B.Tech CSE – Bennett University
 
 📧 [e23cseu1538@bennett.edu.in](mailto:e23cseu1538@bennett.edu.in)
